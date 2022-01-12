@@ -10,6 +10,8 @@ public interface UserService {
     User getById(int id);
 
     User getByEmail(String email);
+    
+    List<User> getByName(String name);
 
     User updateUser(int id, User user);
 

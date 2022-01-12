@@ -10,9 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * InstructorController
- */
+import lombok.var;
+
+
+
 @RestController// creates restful controllers.
 @RequestMapping("instructor")
 //maps HTTP requests to handler methods of MVC and REST controllers
@@ -31,13 +32,14 @@ public class InstructorController {
         //handle template variables in the request URI mapping, and set them as method parameters
         
     ) {
-        return new ResponseEntity<>(
-            instructorRepository
-                .findById(id)
-                .orElseThrow(ItemNotFoundException::new),
-            HttpStatus.OK
-        );
-    }
+    	 var instructor = instructorRepository
+    	            .findById(id)
+    	            .orElseThrow(ItemNotFoundException::new);
+    	        var courses = instructor.getCourses();
+    	        instructor.setCourses(courses);
+    	        return new ResponseEntity<>(instructor, HttpStatus.OK);
+    	    }
+    
 
     @PostMapping
     public ResponseEntity<Instructor> postInstructor(

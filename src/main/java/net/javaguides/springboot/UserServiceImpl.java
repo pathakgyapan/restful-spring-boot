@@ -1,11 +1,13 @@
 package net.javaguides.springboot;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 
 import lombok.var;
+//import lombok.var;
 import net.javaguides.springboot.Exception.ItemNotFoundException;
+import net.javaguides.springboot.Exception.CustomException;
+import org.springframework.http.HttpStatus;
 
 @Service
 //they are holding the business logic and annotates classes at the service layer
@@ -36,11 +38,10 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(ItemNotFoundException::new);
         // return userRepository.findById(id).orElseThrow(CustomException::new);
     }
-
     @Override
     public User getByEmail(String email) {
         return userRepository
-            .findByEmail(email)
+            .getByExperience(email)
             .orElseThrow(ItemNotFoundException::new);
     }
 
@@ -58,4 +59,11 @@ public class UserServiceImpl implements UserService {
         getById(id);
         userRepository.deleteById(id);
     }
+
+    @Override
+    public List<User> getByName(String name) {
+        return userRepository.findByFullnameContainingOrderByIdDesc(name);
+    }
 }
+
+    

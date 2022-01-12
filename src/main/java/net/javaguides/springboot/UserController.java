@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController//ENTRY POINT OF THE SYSTEM(APPLICATION TO THAT address or class
+@RestController
+//ENTRY POINT OF THE SYSTEM(APPLICATION TO THAT address or class
 @RequestMapping(value = "/user")
 //to map web requests into a specific handler classes and or handler methods
 public class UserController {
@@ -24,13 +25,11 @@ public class UserController {
     }
 
     @GetMapping("")
-    //handles the HTTP GET requests
     public ResponseEntity<List<User>> getAllUser() {
         return new ResponseEntity<>(userService.fetchUsers(), HttpStatus.OK);
     }
 
     @PostMapping("")
-    //handles the HTTP POST requests matched with given URI  expression
     public ResponseEntity<User> postUser(@RequestBody User user) {
         return new ResponseEntity<>(
             userService.saveUser(user),
@@ -55,6 +54,14 @@ public class UserController {
             HttpStatus.OK
         );
     }
+    
+
+    @GetMapping("name/{name}")
+    public ResponseEntity<List<User>> getByName(
+    		@PathVariable(value = "name", required = true) String name
+    		)	 {
+    return new ResponseEntity<>(userService.getByName(name), HttpStatus.OK);
+}
 
     /* update user object by id */
     @PutMapping("{id}")

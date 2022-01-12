@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,17 +30,21 @@ public class Instructor {
 
     private String name;
 
-    @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
+    @OneToMany(
+    		targetEntity = Course.class,
+    		 cascade = {CascadeType.PERSIST, CascadeType.MERGE}
+    		)
     //courses haru delete or update bhayo pani cascade huncha
+    @JoinColumn(name = "instructor_id", referencedColumnName = "id")
     private List<Course> courses = new ArrayList<>();
 
-    public void setCourses(List<Course> courses) {
-        this.courses = courses;
+   // public void setCourses(List<Course> courses) {
+        //this.courses = courses;
 
-        for (Course course : courses) {
-            course.setInstructor(this);
-        }
-    }
+        //for (Course course : courses) {
+            //course.setInstructor(this);
+      //  }
+   // }
 }
 
 

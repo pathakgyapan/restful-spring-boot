@@ -24,7 +24,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Locale locale
     ) {
         log.error(ex.getMessage(), ex);
-       ErrorResponse errorResponse = new ErrorResponse(
+      ErrorResponse errorResponse = new ErrorResponse(
             ex.getMessage(),
             ex.getLocalizedMessage(),
             ex.getStatus().value()
