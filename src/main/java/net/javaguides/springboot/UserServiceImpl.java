@@ -1,16 +1,15 @@
 package net.javaguides.springboot;
 
+import net.javaguides.springboot.Exception.ItemNotFoundException;
 import java.util.List;
-import org.springframework.stereotype.Service;
+import javax.persistence.criteria.Predicate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import lombok.var;
-//import lombok.var;
-import net.javaguides.springboot.Exception.ItemNotFoundException;
-import net.javaguides.springboot.Exception.CustomException;
-import org.springframework.http.HttpStatus;
 
-@Service
-//they are holding the business logic and annotates classes at the service layer
+
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -20,9 +19,29 @@ public class UserServiceImpl implements UserService {
     }
 //common recommendation to use @override on all inherited methods
     //indicates that a method declartion is intended to over ride a method declaration
+   
     @Override
     public List<User> fetchUsers() {
-        return userRepository.findAll();
+        var users = userRepository.findAll();
+       
+        // for (User user : users) {
+        //     System.out.println(user.getEmail());
+        // }
+
+        // users.forEach(user -> {
+        //     System.out.println(user.getEmail());
+        // });
+
+        // // ["xyz@gmail.com"]
+
+        // var filterdUser = users
+        //     .stream()
+        //     .filter(user -> {
+        //         System.out.println(user.getEmail());
+        //         return user.getEmail().contains("gmail.com");
+        //     }).collect(Collectors.toList());
+        
+        return users;
     }
 
     @Override
@@ -35,15 +54,16 @@ public class UserServiceImpl implements UserService {
         // throw new CustomException(HttpStatus.BAD_REQUEST, "Resource not found");
         return userRepository
             .findById(id)
-            .orElseThrow(ItemNotFoundException::new);
+            .orElseThrow(() -> new ItemNotFoundException());
         // return userRepository.findById(id).orElseThrow(CustomException::new);
     }
     @Override
     public User getByEmail(String email) {
         return userRepository
-            .getByExperience(email)
+            .getByEmailNative(email)
             .orElseThrow(ItemNotFoundException::new);
     }
+
 
     @Override
     public User updateUser(int id, User user) {
@@ -52,6 +72,7 @@ public class UserServiceImpl implements UserService {
         oldUser.setFullname(user.getFullname());
         oldUser.setAddress(user.getAddress());
         return userRepository.save(oldUser);
+
     }
 
     @Override
@@ -61,9 +82,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getByName(String name) {
-        return userRepository.findByFullnameContainingOrderByIdDesc(name);
+    public Page<User> getByName(String name, Pageable pageable) {
+        // return userRepository.findByFullnameContaining(name, pageable);
+        Specification<User> specification = (
+            root,
+            criteriaQuery,
+            criteriaBuilder
+        ) -> {
+            Predicate finalPredicate;
+            Predicate namePredicate = criteriaBuilder.like(
+                root.get("fullname"),
+                "%" + name + "%"
+            );
+            finalPredicate = namePredicate;
+            if (name != null) {
+                Predicate emailPredicate = criteriaBuilder.like(
+                    root.get("email"),
+                    "%" + name + "%"
+                );
+                finalPredicate =
+                    criteriaBuilder.and(finalPredicate, emailPredicate);
+            }
+            return finalPredicate;
+        };
+        return userRepository.findAll(specification, pageable);
     }
 }
-
-    

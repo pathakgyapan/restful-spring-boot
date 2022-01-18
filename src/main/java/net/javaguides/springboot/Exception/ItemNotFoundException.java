@@ -2,9 +2,7 @@ package net.javaguides.springboot.Exception;
 
 import org.springframework.http.HttpStatus;
 
-/**
- * ItemNotFoundException
- */
+
 public class ItemNotFoundException extends CustomException {
 
     public ItemNotFoundException() {

@@ -4,6 +4,7 @@ import net.javaguides.springboot.UserRepository;
 import net.javaguides.springboot. UserService;
 import  net.javaguides.springboot.UserServiceImpl;
 
+import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,7 +17,7 @@ public class UserServiceBean {
         this.userRepository = userRepository;
     }
 
- // @Bean
+  @Bean
     public UserService getUserService() {
         return new UserServiceImpl(userRepository);
     }

@@ -1,15 +1,15 @@
 package net.javaguides.springboot.Exception;
 
-//import lombok.AllArgsConstructor;
-//import lombok.Getter;
-//import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * ErrorResponse
  */
-//@Getter
-//@Setter
-//@AllArgsConstructor
+@Getter
+@Setter
+@AllArgsConstructor
 public class ErrorResponse {
 
     private String message;

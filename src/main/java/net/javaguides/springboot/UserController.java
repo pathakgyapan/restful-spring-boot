@@ -1,6 +1,11 @@
+
 package net.javaguides.springboot;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-//ENTRY POINT OF THE SYSTEM(APPLICATION TO THAT address or class
 @RequestMapping(value = "/user")
-//to map web requests into a specific handler classes and or handler methods
 public class UserController {
 
     private final UserService userService;
@@ -54,14 +57,22 @@ public class UserController {
             HttpStatus.OK
         );
     }
-    
 
     @GetMapping("name/{name}")
-    public ResponseEntity<List<User>> getByName(
-    		@PathVariable(value = "name", required = true) String name
-    		)	 {
-    return new ResponseEntity<>(userService.getByName(name), HttpStatus.OK);
-}
+    public ResponseEntity<Page<User>> getByName(
+        @PathVariable(value = "name", required = true) String name,
+        @PageableDefault(
+            page = 0,
+            size = 10,
+            sort = "id",
+            direction = Sort.Direction.DESC
+        ) Pageable pageable
+    ) {
+        return new ResponseEntity<>(
+            userService.getByName(name, pageable),
+            HttpStatus.OK
+        );
+    }
 
     /* update user object by id */
     @PutMapping("{id}")
@@ -77,10 +88,7 @@ public class UserController {
 
     /* delete user object by id */
     @DeleteMapping("{id}")
-    public ResponseEntity<User> deleteDemo(
-        @PathVariable(value = "id") int id,
-        @RequestBody User demo
-    ) {
+    public ResponseEntity<User> deleteDemo(@PathVariable(value = "id") int id) {
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

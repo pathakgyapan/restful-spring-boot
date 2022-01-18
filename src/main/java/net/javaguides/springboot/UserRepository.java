@@ -2,21 +2,20 @@ package net.javaguides.springboot;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
-//user repository will now be able to save users, and find single ones by id and so on..
 import org.springframework.data.repository.query.Param;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository
+    extends JpaRepository<User, Integer>, JpaSpecificationExecutor<User> {
     Optional<User> findByEmail(String email);
 
-    List<User> findByFullname(String fullName);
-    //fullname: user ko attribute hunuparcha
-    //findByFullnameLIKE
-    //findByFullnameCONTAINING
-    //WildCard Characters
-    
-    List<User> findByFullnameContaining(String fullName);
+    List<User> findByFullnameLike(String fullName);
+
+    Page<User> findByFullnameContaining(String fullName, Pageable pageable);
 
     List<User> findByFullnameContainingOrderByIdDesc(String fullName);
 
@@ -46,6 +45,18 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> getByExperience(
         @Param(value = "experience") String experience
     );
+
+    @Query(
+        value = "SELECT * FROM user u WHERE u.email = ?1",
+        nativeQuery = true
+    )
+    Optional<User> getByEmailNative(String email);
+
+    @Query(
+        value = "SELECT * FROM user u LEFT JOIN user_detail ud ON u.user_detail_id = ud.id  WHERE ud.experience = :experience",
+        nativeQuery = true
+    )
+    Optional<User> getByExperienceNative(
+        @Param(value = "experience") String experience
+    );
 }
-
-
