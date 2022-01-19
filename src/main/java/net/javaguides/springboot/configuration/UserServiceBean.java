@@ -17,8 +17,8 @@ public class UserServiceBean {
         this.userRepository = userRepository;
     }
 
-  @Bean
-    public UserService getUserService() {
-        return new UserServiceImpl(userRepository);
-    }
+  //@Bean
+    //public UserService getUserService() {
+       // return new UserServiceImpl(userRepository);
+    //}
 }

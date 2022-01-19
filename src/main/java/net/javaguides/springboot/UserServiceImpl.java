@@ -2,20 +2,30 @@ package net.javaguides.springboot;
 
 import net.javaguides.springboot.Exception.ItemNotFoundException;
 import java.util.List;
-import javax.persistence.criteria.Predicate;
+
+import javax.persistence.EntityManager;
+//import javax.persistence.criteria.Predicate;
+import org.hibernate.Session;
+
+import org.jvnet.hk2.annotations.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+//import org.springframework.data.jpa.domain.Specification;
 
 import lombok.var;
 
-
+@Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final EntityManager entityManager;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(
+    		UserRepository userRepository,
+    		EntityManager entityManager
+    		){	
         this.userRepository = userRepository;
+        this.entityManager = entityManager;
     }
 //common recommendation to use @override on all inherited methods
     //indicates that a method declartion is intended to over ride a method declaration
@@ -84,27 +94,41 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<User> getByName(String name, Pageable pageable) {
         // return userRepository.findByFullnameContaining(name, pageable);
-        Specification<User> specification = (
-            root,
-            criteriaQuery,
-            criteriaBuilder
-        ) -> {
-            Predicate finalPredicate;
-            Predicate namePredicate = criteriaBuilder.like(
-                root.get("fullname"),
-                "%" + name + "%"
-            );
-            finalPredicate = namePredicate;
-            if (name != null) {
-                Predicate emailPredicate = criteriaBuilder.like(
-                    root.get("email"),
-                    "%" + name + "%"
-                );
-                finalPredicate =
-                    criteriaBuilder.and(finalPredicate, emailPredicate);
-            }
-            return finalPredicate;
-        };
-        return userRepository.findAll(specification, pageable);
-    }
-}
+       // Specification<User> specification = (
+           // root,
+           // criteriaQuery,
+           // criteriaBuilder
+       // ) -> {
+          //  Predicate finalPredicate;
+          //  Predicate namePredicate = criteriaBuilder.like(
+            //    root.get("fullname"),
+           //     "%" + name + "%"
+         //   );
+          //  finalPredicate = namePredicate;
+           // if (name != null) {
+              //  Predicate emailPredicate = criteriaBuilder.like(
+                  //  root.get("email"),
+                  //  "%" + name + "%"
+              //  );
+              //  finalPredicate =
+                 //   criteriaBuilder.and(finalPredicate, emailPredicate);
+          //  }
+            //return finalPredicate;
+       // };
+    	 var session = entityManager.unwrap(Session.class);
+
+         if (name != null) {
+             session
+                 .enableFilter("nameEmailFilter")
+                 .setParameter("email", "%" + name + "%")
+                 .setParameter("name", "%" + name + "%");
+         }
+
+         var filteredUsers = userRepository.findAll(pageable);
+         session.disableFilter("emailFilter");
+
+         return filteredUsers;
+     }
+ }
+
+

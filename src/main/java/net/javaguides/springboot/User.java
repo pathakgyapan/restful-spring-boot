@@ -10,6 +10,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -21,6 +24,21 @@ import lombok.Setter;
 @Setter //enable you avoid having to write manually getter and setter methods in java classes
 @SQLDelete(sql = "UPDATE user SET enabled = 0 WHERE id = ?")
 @Where(clause = "(enabled=1)")
+@FilterDef(
+	    name = "nameEmailFilter",
+	    parameters = {
+	        @ParamDef(name = "name", type = "string"),
+	        @ParamDef(name = "email", type = "string"),
+	    }
+	)
+	@Filter(
+	    name = "nameEmailFilter",
+	    condition = "(fullname like :name or email like :email)"
+	)
+	@Filter(
+	    name = "nameEmailFilter",
+	    condition = "(fullname like :name or email like :email)"
+	)
 
 public class User {
 
