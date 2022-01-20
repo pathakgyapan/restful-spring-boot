@@ -19,19 +19,28 @@ import org.hibernate.annotations.Where;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Entity //class can be mapped to a table
 @Getter
 @Setter //enable you avoid having to write manually getter and setter methods in java classes
 @SQLDelete(sql = "UPDATE user SET enabled = 0 WHERE id = ?")
-@Where(clause = "(enabled=1)")
-@FilterDef(
+@Where(clause = "enabled=1")
+@FilterDef( 
+	//defines filter definition name and parameters to set values while enabling filter
+		//by using the parameters attribute, we can pass the parameters to filterDef
+	
 	    name = "nameEmailFilter",
 	    parameters = {
 	        @ParamDef(name = "name", type = "string"),
 	        @ParamDef(name = "email", type = "string"),
 	    }
+	    //@ParamDef: is used in conjunction with @filterdef so that the hivernate filter can be customized
+	    //with runtime-provided parameter values
+	    
+	    
 	)
 	@Filter(
+			//adds filter to an entity or target entity
 	    name = "nameEmailFilter",
 	    condition = "(fullname like :name or email like :email)"
 	)
