@@ -1,7 +1,7 @@
 package net.javaguides.springboot.configuration;
 
 import net.javaguides.springboot.UserRepository;
-import net.javaguides.springboot. UserService;
+import net.javaguides.springboot.UserService;
 import  net.javaguides.springboot.UserServiceImpl;
 
 import org.springframework.context.annotation.Bean;

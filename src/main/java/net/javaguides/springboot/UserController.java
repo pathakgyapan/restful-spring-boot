@@ -2,6 +2,8 @@
 package net.javaguides.springboot;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -15,21 +17,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping(value = "/user")
+@Slf4j
 public class UserController {
 
+//    @Autowired    -> field injection
     private final UserService userService;
 
+    // constructor based dependency injection
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping("")
+    //    @Autowired    -> setter based injection
+//    public void setUserService(UserService userService) {
+//        this.userService = userService;
+//    }
+
+        @GetMapping("")
     public ResponseEntity<List<User>> getAllUser() {
+        log.info("UserController class getAllUser method");
         return new ResponseEntity<>(userService.fetchUsers(), HttpStatus.OK);
     }
 
